@@ -5,5 +5,5 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 import userRouter from './routers/user.router.js'
-app.use('/user',userRouter)
+app.use('/users',userRouter)
 export { app }
