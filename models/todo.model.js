@@ -10,7 +10,7 @@ const todoModel = new mongoose.Schema({
         type: String,
         required: true,
     },
-    due_date: {
+    due_Date: {
         type: Date,
         required: true,
     },
@@ -28,10 +28,9 @@ const todoModel = new mongoose.Schema({
         type: [String],
         default: [],
     },
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+    email: {
+        type: String,
+        required: true,
     }
 }, {
     timestamps: true

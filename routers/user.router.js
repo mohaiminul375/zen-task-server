@@ -7,7 +7,7 @@ import authenticateUser from "../middlewares/verifyToken.js";
 router.post('/register', async (req, res) => {
     try {
         console.log(req.body)
-        const { name, email, password } = req.body;
+        const { name, email, password, avatar, userId } = req.body;
 
         const existingUser = await User.findOne({
             email
@@ -23,7 +23,8 @@ router.post('/register', async (req, res) => {
         const newUser = new User({
             name,
             email,
-            password: hashedPassword
+            avatar,
+            password: hashedPassword,
         })
         await newUser.save();
         res.status(200).json({ success: true, message: 'register successfully please login' });

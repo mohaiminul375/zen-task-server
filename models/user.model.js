@@ -11,6 +11,10 @@ const userModel = mongoose.Schema({
         required: true,
         index: true, //optimize for search
     },
+    avatar: {
+        type: String,
+        required: true,
+    },
     password: {
         type: String,
         required: true,
