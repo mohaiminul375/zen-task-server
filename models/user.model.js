@@ -16,6 +16,6 @@ const userModel = mongoose.Schema({
         required: true,
     },
 }, {
-    timeStamp: true
+    timestamps: true
 })
 export const User = mongoose.model("User", userModel)
