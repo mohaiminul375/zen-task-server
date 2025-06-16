@@ -4,6 +4,54 @@ const router = Router();
 
 
 
+
+
+// get dashboard summary
+router.get('/dashboard/:email', async (req, res) => {
+    try {
+        const { email } = req.params;
+        // today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        // tomorrow
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        // day after tomorrow
+        const dayAfterTomorrow = new Date(tomorrow);
+        dayAfterTomorrow.setDate(tomorrow.getDate() + 1);
+
+        // get all task
+        const totalTasks = await Todo.find({ email });
+
+        //   get today task
+        const todaysTasks = await Todo.find({
+            email,
+            due_Date: {
+                $gte: today,
+                $lt: tomorrow
+            }
+        });
+
+        // get tomorrow task
+        const tomorrowsTasks = await Todo.find({
+            email,
+            due_Date: {
+                $gte: tomorrow,
+                $lt: dayAfterTomorrow
+            }
+        });
+
+        res.status(200).json({
+            totalTasksCount: totalTasks.length,
+            todaysTasksCount: todaysTasks.length,
+            tomorrowsTasksCount: tomorrowsTasks.length,
+        });
+
+    } catch (error) {
+        res.status(500).json({ error: 'Server error', message: error.message });
+    }
+});
+// get all to by email
 router.get('/all-todo/:email', async (req, res) => {
     try {
         const tasks = await Todo.find({ email: req.params.email });
@@ -30,7 +78,7 @@ router.post('/create-todo', async (req, res) => {
 })
 // update a todo
 router.patch('/update-todo/:id', async (req, res) => {
-  
+
     try {
         await Todo.updateOne({ _id: req.params.id }, {
             $set: {
