@@ -54,7 +54,31 @@ router.get('/dashboard/:email', async (req, res) => {
 // get all to by email
 router.get('/all-todo/:email', async (req, res) => {
     try {
-        const tasks = await Todo.find({ email: req.params.email });
+        const email = req.params.email;
+        const { search, sort, todayTasks } = req.query; //from client
+        const searchRegex = new RegExp(search, "i"); // case-insensitive
+        //    query by search description, tags
+        const query = {
+            email,
+            $or: [
+                { title: searchRegex },
+                { description: searchRegex },
+                { tags: { $in: [searchRegex] } }
+            ]
+        };
+        // Get current(today) date task
+        console.log(todayTasks)
+        if (todayTasks) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1); // next day
+
+            query.due_Date = { $gte: today, $lt: tomorrow };
+        }
+        // Date sorting: "new" = descending (latest first), "old" = ascending
+        const sortBy = sort === "new" ? { createdAt: -1 } : { createdAt: 1 };
+        const tasks = await Todo.find(query).sort(sortBy);
         const groupedTasks = {
             todo: tasks.filter(task => task.status === 'To Do'),
             inProgress: tasks.filter(task => task.status === 'In Progress'),
