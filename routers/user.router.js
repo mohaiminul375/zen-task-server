@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 const router = Router();
 import jwt from "jsonwebtoken"
 import authenticateUser from "../middlewares/verifyToken.js";
+// create a new account
 router.post('/register', async (req, res) => {
     try {
         console.log(req.body)
@@ -19,6 +20,7 @@ router.post('/register', async (req, res) => {
                 message: "already have an account"
             });
         }
+        // hashed password
         const hashedPassword = bcrypt.hashSync(password, 10);
         const newUser = new User({
             name,
@@ -32,6 +34,7 @@ router.post('/register', async (req, res) => {
         res.status(500).json({ message: `failed to signup: ${error}` });
     }
 })
+// login for verifier
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -69,9 +72,9 @@ router.post('/login', async (req, res) => {
     }
 })
 // get user data after login
-// authenticateUser,
+
 router.get('/user-data', authenticateUser, async (req, res) => {
-    console.log('hit server')
+
     try {
         // Find the user by email (from the decoded JWT)
         const user = await User.findOne({ email: req.user.email });
@@ -87,4 +90,19 @@ router.get('/user-data', authenticateUser, async (req, res) => {
         res.status(500).json({ message: "Error fetching user data" });
     }
 });
+// Update profile
+router.patch('/update-user/:id', async (req, res) => {
+    try {
+        console.log(req.params.id, req.body)
+        await User.updateOne({ _id: req.params.id }, {
+            $set: {
+                ...req.body
+            }
+        })
+
+        res.status(200).json({ success: true, message: 'Profile Updated' });
+    } catch (error) {
+        res.status(500).json({ message: `failed to update profile: ${error}` });
+    }
+})
 export default router;
