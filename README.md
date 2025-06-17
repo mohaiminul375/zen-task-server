@@ -7,6 +7,7 @@ This is the backend API server for the Electro-Hub Kanban task management app. I
 ## Features
 
 - Custom JWT-based authentication
+- Password hashed with bcrypt before user data save
 
 - User login and registration
 
