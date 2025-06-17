@@ -92,9 +92,25 @@ router.patch('/update-todo/:id', async (req, res) => {
     }
 
 })
+// update a todo
+router.patch('/update-todo-dnd/:id', async (req, res) => {
+    try {
+        const { status } = req.body
+        console.log(req.params.id, status)
+        await Todo.updateOne({ _id: req.params.id }, {
+            $set: {
+                status: status
+            }
+        })
+        res.status(200).json({ success: true, message: 'todo was updated' });
+    } catch (error) {
+        res.status(500).json({ message: `failed to update todo: ${error}` });
+    }
+
+})
 // delete a todo
 router.delete('/:id', async (req, res) => {
-    console.log('hited')
+
     try {
         await Todo.deleteOne({ _id: req.params.id })
         res.status(200).json({ success: true });
